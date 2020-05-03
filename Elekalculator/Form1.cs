@@ -14,8 +14,9 @@ namespace Elekalculator
     public partial class Form1 : Form
     {
         double value = 0.0;
-        string operation = "";
+        string operationCur = "", operationPrev = "";
         bool operationPressed = false;
+        bool buttonPressed = false;
 
         public Form1()
         {
@@ -39,6 +40,8 @@ namespace Elekalculator
             }
             else
                 result.Text += b.Text;
+
+            buttonPressed = true;
         }
 
         private void Button16_Click(object sender, EventArgs e)
@@ -50,45 +53,52 @@ namespace Elekalculator
         {
             Button b = (Button)sender;
 
-            if (value != 0)
+            if ((value != 0) && (buttonPressed))
                 buttonEqual.PerformClick();
             else
                 value = double.Parse(result.Text, CultureInfo.InvariantCulture);
 
-            operation = b.Text;
+            operationCur = b.Text;
             operationPressed = true;
-            equation.Text = value.ToString(CultureInfo.InvariantCulture) + " " + operation;
+            equation.Text = value.ToString(CultureInfo.InvariantCulture) + " " + operationCur;
+            operationPrev = operationCur;
+            buttonPressed = false;
         }
 
         private void Button18_Click(object sender, EventArgs e)
         {
-            equation.Text = " ";
-            switch (operation)
+            switch (operationCur)
             {
                 case "+":
-                    result.Text = (double.Parse(result.Text, CultureInfo.InvariantCulture) + value).ToString(CultureInfo.InvariantCulture);
+                    result.Text = (value + double.Parse(result.Text, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                    equation.Text = result.Text;
                     break;
                 case "/":
-                    result.Text = (double.Parse(result.Text, CultureInfo.InvariantCulture) / value).ToString(CultureInfo.InvariantCulture);
+                    result.Text = (value / double.Parse(result.Text, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                    equation.Text = result.Text;
                     break;
                 case "*":
-                    result.Text = (double.Parse(result.Text, CultureInfo.InvariantCulture) * value).ToString(CultureInfo.InvariantCulture);
+                    result.Text = (value * double.Parse(result.Text, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                    equation.Text = result.Text;
                     break;
                 case "-":
-                    result.Text = (double.Parse(result.Text, CultureInfo.InvariantCulture) - value).ToString(CultureInfo.InvariantCulture);
+                    result.Text = (value - double.Parse(result.Text, CultureInfo.InvariantCulture)).ToString(CultureInfo.InvariantCulture);
+                    value = double.Parse(result.Text, CultureInfo.InvariantCulture);
                     break;
                 default:
                     break;
             }
             value = double.Parse(result.Text, CultureInfo.InvariantCulture);
             operationPressed = false;
+            buttonPressed = false;
+            equation.Text = " ";
         }
 
         private void Button17_Click(object sender, EventArgs e)
         {
             result.Text = "0";
             value = 0;
-            operation = "";
+            operationCur = "";
             operationPressed = false;
             equation.Text = " ";
         }
@@ -97,8 +107,11 @@ namespace Elekalculator
         {
             buttonEqual.Focus();
 
-            switch(e.KeyChar.ToString())
+            switch (e.KeyChar.ToString())
             {
+                case "0":
+                    button0.PerformClick();
+                    break;
                 case "1":
                     button1.PerformClick();
                     break;
